@@ -29,11 +29,13 @@ function othello() {
             //hier op basis van move.coveredStones alle nodige stenen omkeren
             turnStones(move, color);
             updateScore();
+
             //needs to be reactivated once other player there
             //color = Stone.white;
         }
-
     }
+
+
 
     //dit later refactoren zodat het hergebruikt kan worden in validMove
     function drawBoard(board) {
@@ -42,6 +44,7 @@ function othello() {
                 let move = new Move(row,col);
                 drawSquare(row, col);
                 drawStone(move, board.stones[row][col]);
+                drawAllAvailableMoves();
                 updateScore();
             }
         }        
