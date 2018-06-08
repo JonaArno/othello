@@ -33,8 +33,8 @@ class Board {
     }
 
     isValidMove(move, color) {
-        return this.isWithinBoardLimits(move.row,move.col) &&
-            this.isEmpty(move.row, move.col) &&
+        return this.isWithinBoardLimits(move.row,move.column) &&
+            this.isEmpty(move.row, move.column) &&
             this.circlesOtherPlayer(move, color);
     }
 
@@ -48,33 +48,19 @@ class Board {
                 }
             }
         }
+
+        for (let index = 0; index < move.coveredStones.length; index++) {
+            if (index === 0) {
+                this.stones[move.row][move.column] = color;
+            }
+            let row = move.coveredStones[index].row;
+            let column = move.coveredStones[index].column;
+            this.stones[row][column] = color;
+        }
         return move.coveredStones.length;
     }
 
-    /*
     circlesOtherPlayerDirection(move, color, direction) {
-        let otherPlayer = Stone.otherColor(color);
-
-        if (this.isWithinBoardLimits(row+direction.rowFactor, col+direction.columnFactor) 
-            && !this.isEmpty(row+direction.rowFactor, col+direction.columnFactor) 
-            && this.stones[row+direction.rowFactor][col+ direction.columnFactor] === Stone.otherPlayer) {
-
-            row += direction.rowFactor * 2;
-            col += direction.columnFactor * 2;
-
-            while (this.isWithinBoardLimits(row,col) && !this.isEmpty(row,col)) {
-            
-                if (this.stones[row][col] === color) return true;
-                
-                row += direction.rowFactor;
-                col += direction.columnFactor;
-            }
-        }   
-        return false;
-    }
-    */
-
-   circlesOtherPlayerDirection(move, color, direction) {
         let coveredStones = [];
         let collection = [];
         let that = this;
@@ -92,14 +78,14 @@ class Board {
             }
 
             let newFieldCoordinate = new Move(newRow, newColumn);
-            let newFieldColor = this.stones[newRow][newColumn];
+            let newFieldColor = that.stones[newRow][newColumn];
 
-            if (this.fieldBelongsToOtherColor(newFieldColor, color)) {
+            if (that.fieldBelongsToOtherColor(newFieldColor, color)) {
                 collection.push(newFieldCoordinate);
                 exploreDirection(newRow, newColumn, color, direction);
             }
 
-            if (this.collectionIsEnclosed(collection, newFieldColor, color)) {
+            if (that.collectionIsEnclosed(collection, newFieldColor, color)) {
                 coveredStones = collection;
             }
         }
@@ -107,7 +93,7 @@ class Board {
     }
 
     fieldBelongsToOtherColor(fieldColor, color) {
-        return fieldColor !== color;
+        return (( fieldColor !== color ) && ( fieldColor !== Stone.empty ));
     }
 
     collectionIsEnclosed(collection, field, color) {

@@ -26,20 +26,26 @@ function othello() {
 
         if (board.isValidMove(move, color) && color === Stone.black) {
             drawStone(move, color);
-            turnStones(move,color);
-            color = Stone.white;
+            //hier op basis van move.coveredStones alle nodige stenen omkeren
+            turnStones(move, color);
+            updateScore();
+            //needs to be reactivated once other player there
+            //color = Stone.white;
         }
+
     }
 
+    //dit later refactoren zodat het hergebruikt kan worden in validMove
     function drawBoard(board) {
         for (let row = 0; row < board.numberOfRows; row++) {
             for (let col = 0; col < board.numberOfColumns; col++) {
                 let move = new Move(row,col);
                 drawSquare(row, col);
                 drawStone(move, board.stones[row][col]);
+                updateScore();
             }
         }        
-        updateScore();
+     
     }
 
     function drawSquare(row, col) {
@@ -58,6 +64,12 @@ function othello() {
             ctx.fillStyle = stone == Stone.black ? "black" : "white";
             ctx.arc(move.column * blockSize + offset, move.row * blockSize + offset, 20, 0, Math.PI * 2);
             ctx.fill();
+        }
+    }
+
+    function turnStones(move, color) {
+        for (let index = 0; index < move.coveredStones.length; index++) {
+            drawStone(move.coveredStones[index] ,color);
         }
     }
     
