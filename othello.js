@@ -4,6 +4,7 @@ function othello() {
 
     const blockSize = 50;
     let color = Stone.black;
+    let validMoves = [];
 
     let canvas = document.getElementById("bordCanvas");
     let ctx = canvas.getContext("2d");
@@ -12,7 +13,7 @@ function othello() {
     let board = new Board(8,8);
     board.initialise();
     drawBoard(board);
-
+    
     function boardClick(event) {
         let x = event.pageX - canvas.offsetLeft;
         let y = event.pageY - canvas.offsetTop;
@@ -20,14 +21,15 @@ function othello() {
         let row = Math.floor(y / blockSize);
         let col = Math.floor(x / blockSize);
 
+        //remove once application completed
         console.log("column " + col + " and row " + row);
 
         let move = new Move(row,col);
 
         if (board.isValidMove(move, color) && color === Stone.black) {
             drawStone(move, color);
-            //hier op basis van move.coveredStones alle nodige stenen omkeren
             turnStones(move, color);
+            removePossibleMoves();
             updateScore();
 
             //needs to be reactivated once other player there
@@ -44,12 +46,12 @@ function othello() {
                 let move = new Move(row,col);
                 drawSquare(row, col);
                 drawStone(move, board.stones[row][col]);
-                drawAllAvailableMoves();
-                updateScore();
+               
             }
-        }        
-     
-    }
+        }
+        drawAllAvailableMoves();
+        updateScore();      
+    }  
 
     function drawSquare(row, col) {
         ctx.beginPath();
@@ -76,6 +78,29 @@ function othello() {
         }
     }
     
+    function drawAllAvailableMoves() {
+        validMoves = board.getValidMovesForColor(Stone.black);
+
+        for (let index = 0 ; index < validMoves.length; index++) {
+            drawAvailableMove(validMoves[index]);
+        }
+    }
+
+    function removePossibleMoves() {
+        for (let index = 0; index < validMoves.length; index++) {
+            drawSquare(validMoves[index].row, validMoves[index].column);
+        }
+
+        validMoves = [];
+    }
+
+    function drawAvailableMove(move) {
+        let offset = blockSize / 2;
+        ctx.beginPath();
+        ctx.fillStyle = "white";
+        ctx.arc(move.column * blockSize + offset, move.row * blockSize + offset, 4, 0, Math.PI *2);
+        ctx.fill();
+    }
 
     function updateScore() {
         let scoreWhite = 0;
