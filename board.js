@@ -110,7 +110,7 @@ class Board {
                 coveredStones = collection;
             }
         }
-        return coveredStones;
+        return coveredStones;   
     }
 
     pickRandomMoveFromMovesCollection(validMovesForColor) {

@@ -34,27 +34,35 @@ function othello() {
             removePossibleMoves();
             updateScore();
 
-
-           setTimeout(function() {
+            //niet de cleanste manier
+            setTimeout(function() {
                 whitePlayerTurnRandom();
-                drawAllAvailableMoves();
+                while ((board.getValidMovesForColor(Stone.black) === undefined) || ((board.getValidMovesForColor(Stone.black)).length === 0)) {
+                    setTimeout(function() {
+                        whitePlayerTurnRandom();
+                    }, 2000);                  
+                }
+                drawAllAvailableMoves();               
             }, 2000);
 
 
 
-            //needs to be reactivated once other player there
             //IS THIS EVEN NECESSARY? Remove references and hardcode?
             //color = Stone.white;
         }
     }
 
     function whitePlayerTurnRandom() {
-        let moveToExecute = board.pickRandomMoveFromMovesCollection(board.getValidMovesForColor(Stone.white));
-        //moveToExecute.coveredStones = 
-        board.circlesOtherPlayer(moveToExecute, Stone.white);
-        drawStone(moveToExecute, Stone.white);
-        turnStones(moveToExecute, Stone.white);
-        updateScore();
+        //check if no move possible first
+        if ((board.getValidMovesForColor(Stone.white) !== undefined) || ((board.getValidMovesForColor(Stone.white)).length !== 0)) {
+            let moveToExecute = board.pickRandomMoveFromMovesCollection(board.getValidMovesForColor(Stone.white));
+            if (moveToExecute !== undefined) {
+                board.circlesOtherPlayer(moveToExecute, Stone.white);
+                drawStone(moveToExecute, Stone.white);
+                turnStones(moveToExecute, Stone.white);
+                updateScore();
+            }
+        }
     }
 
     function removePlacedStoneFromValidMovesCollection(move) {
@@ -139,6 +147,15 @@ function othello() {
         }
 
         document.getElementById("scoreBord").innerText = "Wit: " + scoreWhite + " /// Black: " + scoreBlack;
+
+        // check if game is over
+        if (board.getValidMovesForColor(Stone.black).length === 0 && board.getValidMovesForColor(Stone.white).length === 0) {
+            scoreWhite > scoreBlack ? alert("White beat black with a score of " + scoreWhite + " against " + scoreBlack) 
+            : scoreBlack > scoreWhite ? alert("Black beat white with a score of " + scoreBlack + " against " + scoreWhite)
+            : alert("The game ended in a draw. Both players ended on a score of " + scoreBlack);
+        }
+
+
     }
 }
 
