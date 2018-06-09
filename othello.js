@@ -3,6 +3,7 @@
 function othello() {
 
     const blockSize = 50;
+    //rewrite to make this redundant?
     let color = Stone.black;
     let validMoves = [];
 
@@ -29,15 +30,40 @@ function othello() {
         if (board.isValidMove(move, color) && color === Stone.black) {
             drawStone(move, color);
             turnStones(move, color);
+            removePlacedStoneFromValidMovesCollection(move);
             removePossibleMoves();
             updateScore();
 
+
+           setTimeout(function() {
+                whitePlayerTurnRandom();
+                drawAllAvailableMoves();
+            }, 2000);
+
+
+
             //needs to be reactivated once other player there
+            //IS THIS EVEN NECESSARY? Remove references and hardcode?
             //color = Stone.white;
         }
     }
 
+    function whitePlayerTurnRandom() {
+        let moveToExecute = board.pickRandomMoveFromMovesCollection(board.getValidMovesForColor(Stone.white));
+        //moveToExecute.coveredStones = 
+        board.circlesOtherPlayer(moveToExecute, Stone.white);
+        drawStone(moveToExecute, Stone.white);
+        turnStones(moveToExecute, Stone.white);
+        updateScore();
+    }
 
+    function removePlacedStoneFromValidMovesCollection(move) {
+        for (let item = 0; item < validMoves.length; item++) {
+            if (validMoves[item].row === move.row && validMoves[item].column === move.column) {
+                validMoves.splice(item, 1);
+            }
+        }
+    }
 
     //dit later refactoren zodat het hergebruikt kan worden in validMove
     function drawBoard(board) {
@@ -45,8 +71,7 @@ function othello() {
             for (let col = 0; col < board.numberOfColumns; col++) {
                 let move = new Move(row,col);
                 drawSquare(row, col);
-                drawStone(move, board.stones[row][col]);
-               
+                drawStone(move, board.stones[row][col]);            
             }
         }
         drawAllAvailableMoves();
@@ -90,7 +115,6 @@ function othello() {
         for (let index = 0; index < validMoves.length; index++) {
             drawSquare(validMoves[index].row, validMoves[index].column);
         }
-
         validMoves = [];
     }
 
