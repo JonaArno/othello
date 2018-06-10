@@ -146,7 +146,7 @@ function othello() {
             }
         }
 
-        document.getElementById("scoreBord").innerText = "Wit: " + scoreWhite + " /// Black: " + scoreBlack;
+        document.getElementById("scoreBord").innerText = "White: " + scoreWhite + " /// Black: " + scoreBlack;
 
         // check if game is over
         if (board.getValidMovesForColor(Stone.black).length === 0 && board.getValidMovesForColor(Stone.white).length === 0) {
